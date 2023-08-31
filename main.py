@@ -31,12 +31,7 @@ if __name__ == "__main__":
     parser.add_argument('--interval', type=int, default=30, help='time between synchronizations in seconds')
     parser.add_argument('--log_file', type=str, default='logfile.txt', help='the path to the log file')
 
-
     args = parser.parse_args()
-
-    source = args.source
-    replica = args.replica
-    log_file = args.log_file
     
     logging.basicConfig(level=logging.INFO,
                         format='%(levelname)s:%(asctime)s - %(message)s',
@@ -45,13 +40,13 @@ if __name__ == "__main__":
                             logging.FileHandler(args.log_file),
                             logging.StreamHandler()]
                         )
-    logging.info(f'start watching directory {source!r}')
+    logging.info(f'start watching directory {args.source!r}')
     event_handler = LoggingEventHandler()
     observer = Observer()
-    observer.schedule(event_handler, source, recursive=True)
+    observer.schedule(event_handler, args.source, recursive=True)
     observer.start()
 
     while True:
         time.sleep(args.interval)
-        clear_folder_content(replica)
-        sync_target_folder(source, replica)
+        clear_folder_content(args.replica)
+        sync_target_folder(args.source, args.replica)
